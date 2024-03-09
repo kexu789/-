@@ -1,0 +1,72 @@
+class User:
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+        self.posts = []
+        self.following = []
+
+    def create_post(self, content):
+        post = Post(content, self)
+        self.posts.append(post)
+
+    def follow(self, user):
+        if user not in self.following:
+            self.following.append(user)
+
+    def unfollow(self, user):
+        if user in self.following:
+            self.following.remove(user)
+
+    def view_timeline(self):
+        if self.posts:
+            print(f"{self.username}'s Timeline:")
+            print("------------------------")
+            for post in self.posts:
+                print(f"{post.author.username}: {post.content}")
+            print("------------------------")
+        else:
+            print("No posts in the timeline.")
+
+    def view_feed(self):
+        feed = []
+        for user in self.following:
+            feed.extend(user.posts)
+        sorted_feed = sorted(feed, key=lambda post: post.timestamp, reverse=True)
+        if sorted_feed:
+            print(f"{self.username}'s Feed:")
+            print("---------------------")
+            for post in sorted_feed:
+                print(f"{post.author.username}: {post.content}")
+            print("---------------------")
+        else:
+            print("Feed is empty.")
+
+class Post:
+    def __init__(self, content, author):
+        self.content = content
+        self.author = author
+        self.timestamp = datetime.datetime.now()
+
+def main():
+    user1 = User("user1", "user1@example.com")
+    user2 = User("user2", "user2@example.com")
+    user3 = User("user3", "user3@example.com")
+
+    user1.create_post("Hello, world!")
+    user2.create_post("I love programming.")
+    user3.create_post("Happy coding!")
+
+    user1.follow(user2)
+    user1.follow(user3)
+    user2.follow(user1)
+
+    user1.view_timeline()
+    user2.view_timeline()
+    user3.view_timeline()
+
+    user1.view_feed()
+    user2.view_feed()
+    user3.view_feed()
+
+if __name__ == "__main__":
+    main()
